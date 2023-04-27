@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 var builder = new HostBuilder()
     .ConfigureAppConfiguration((hostingContext, config) =>
     {
-        config.SetBasePath(Directory.GetCurrentDirectory())
+        config.SetBasePath(getProjectRootDirectory())
         .AddJsonFile(@"appsettings.json", optional: false, reloadOnChange: true);
     })
     .ConfigureServices((hostContext, services) =>
@@ -18,3 +18,15 @@ var builder = new HostBuilder()
     .UseConsoleLifetime();
 
 await builder.RunConsoleAsync();
+
+string getProjectRootDirectory()
+{
+    string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+    string rootDirectory = baseDirectory;
+
+    while (Directory.GetParent(rootDirectory) != null && !File.Exists(Path.Combine(rootDirectory, "Program.cs")))
+    {
+        rootDirectory = Directory.GetParent(rootDirectory).FullName;
+    }
+    return rootDirectory;
+}
