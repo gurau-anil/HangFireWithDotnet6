@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HangFireWithDotnet6;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var builder = new HostBuilder()
@@ -13,6 +15,14 @@ var builder = new HostBuilder()
         var configuration = hostContext.Configuration;
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        services.AddTransient<App>();
+
+        // create service provider
+        var serviceProvider = services.BuildServiceProvider();
+
+        // entry point to run app
+        serviceProvider.GetService<App>().Main();
 
     })
     .UseConsoleLifetime();
