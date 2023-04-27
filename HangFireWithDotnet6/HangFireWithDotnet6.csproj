@@ -9,6 +9,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.34" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.34" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.7.34" />
   </ItemGroup>
 
 </Project>
