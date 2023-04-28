@@ -1,4 +1,6 @@
-﻿using HangFireWithDotnet6;
+﻿using Hangfire;
+using Hangfire.SqlServer;
+using HangFireWithDotnet6;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,6 +18,24 @@ var builder = new HostBuilder()
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
+        //Getting hangfire connection string from appsetting
+        var hangFireConnectionString = configuration.GetConnectionString("HangfireConnection");
+
+        // adding and configuring hangfire
+        services.AddHangfire(configuration => configuration
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UseSqlServerStorage(hangFireConnectionString, new SqlServerStorageOptions
+        {
+            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+            QueuePollInterval = TimeSpan.Zero,
+            UseRecommendedIsolationLevel = true,
+            DisableGlobalLocks = true
+        }));
+        //adding hangfire server
+        services.AddHangfireServer();
         services.AddTransient<App>();
 
         // create service provider
